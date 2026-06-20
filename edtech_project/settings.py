@@ -300,8 +300,8 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # FIXED 5: Changed to standard storage. Prevents the deployment from failing 
 # just because a single .png file referenced in your CSS went missing.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
