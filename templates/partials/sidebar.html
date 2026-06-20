@@ -1,0 +1,23 @@
+{% load static %}
+<aside class="ep-sidebar">
+  <div class="ep-sidebar-section">
+    <div class="ep-sidebar-label">Learning</div>
+    <a href="/dashboard/" class="ep-sidebar-link {% if active == 'dashboard' %}active{% endif %}"><i class="bi bi-grid-fill"></i> Dashboard</a>
+    <a href="/courses/" class="ep-sidebar-link {% if active == 'courses' %}active{% endif %}"><i class="bi bi-book-fill"></i> All Courses</a>
+    <a href="/teachers/" class="ep-sidebar-link {% if active == 'teachers' %}active{% endif %}"><i class="bi bi-person-video3"></i> Teachers</a>
+    <a href="/ai-doubt/" class="ep-sidebar-link {% if active == 'ai_doubt' %}active{% endif %}"><i class="bi bi-robot"></i> AI Doubt Solver</a>
+    <a href="/tests/" class="ep-sidebar-link {% if active == 'tests' %}active{% endif %}"><i class="bi bi-clipboard-check-fill"></i> Tests</a>
+  </div>
+  <div class="ep-sidebar-section">
+    <div class="ep-sidebar-label">Progress</div>
+    <a href="/activity/" class="ep-sidebar-link {% if active == 'activity' %}active{% endif %}"><i class="bi bi-activity"></i> My Activity</a>
+    <a href="/analytics/" class="ep-sidebar-link {% if active == 'analytics' %}active{% endif %}"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
+    <a href="/leaderboard/" class="ep-sidebar-link {% if active == 'leaderboard' %}active{% endif %}"><i class="bi bi-trophy-fill"></i> Leaderboard</a>
+    <a href="/achievements/" class="ep-sidebar-link {% if active == 'achievements' %}active{% endif %}"><i class="bi bi-award-fill"></i> Achievements</a>
+  </div>
+  <div class="ep-sidebar-section">
+    <div class="ep-sidebar-label">Account</div>
+    <a href="/profile/" class="ep-sidebar-link {% if active == 'profile' %}active{% endif %}"><i class="bi bi-person-fill"></i> Profile</a>
+    <a href="/support/" class="ep-sidebar-link {% if active == 'support' %}active{% endif %}"><i class="bi bi-headset"></i> Support</a>
+  </div>
+</aside>

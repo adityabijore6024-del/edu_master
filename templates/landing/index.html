@@ -1,0 +1,258 @@
+{% extends "partials/base.html" %}
+{% block title %}EduPeak – India's Premium Learning Platform{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="ep-hero">
+  <div class="ep-hero-blob ep-hero-blob-1"></div>
+  <div class="ep-hero-blob ep-hero-blob-2"></div>
+  <div class="ep-hero-blob ep-hero-blob-3"></div>
+
+  <div class="ep-container">
+    <div class="ep-hero-grid">
+      <div>
+        <div class="ep-hero-eyebrow"><span class="dot"></span> India's #1 Rated EdTech Platform</div>
+        <h1 class="ep-hero-title">Learn Without<br><span class="highlight">Limits.</span> Achieve More.</h1>
+        <p class="ep-hero-subtitle">Master competitive exams with expert teachers, AI-powered doubt solving, and a learning experience built for results — not just content.</p>
+        <div class="ep-hero-actions">
+          <a href="{% if user.is_authenticated %}/dashboard/{% else %}/auth/signup/{% endif %}" class="ep-btn ep-btn-accent ep-btn-lg">
+            Start Learning Free <i class="bi bi-arrow-right"></i>
+          </a>
+          <a href="/courses/" class="ep-btn ep-btn-ghost ep-btn-lg" style="color:white !important;border-color:rgba(255,255,255,0.3) !important;">
+            <i class="bi bi-play-circle"></i> Explore Courses
+          </a>
+        </div>
+        <div class="ep-hero-social-proof">
+          <div class="ep-avatar-stack">
+            <div class="ep-avatar">A</div>
+            <div class="ep-avatar">R</div>
+            <div class="ep-avatar">S</div>
+            <div class="ep-avatar">+</div>
+          </div>
+          <span class="ep-social-proof-text"><strong>{{ stats.students|default:"15,000" }}+</strong> students learning right now</span>
+        </div>
+      </div>
+
+      <div class="ep-hero-visual">
+        <div class="ep-hero-card-float">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="ep-stat-card-icon" style="background:rgba(245,158,11,0.2);color:#fbbf24;"><i class="bi bi-graph-up-arrow"></i></div>
+            <div>
+              <div style="font-weight:700;font-size:1.1rem;">Your Progress</div>
+              <div style="font-size:0.8rem;opacity:0.7;">This week</div>
+            </div>
+          </div>
+          <div style="height:8px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;margin-bottom:0.5rem;">
+            <div style="height:100%;width:78%;background:linear-gradient(90deg,#f59e0b,#fbbf24);border-radius:99px;"></div>
+          </div>
+          <div style="font-size:0.8rem;opacity:0.7;">78% course completion · 12 tests taken</div>
+        </div>
+        <div class="ep-float-badge ep-float-badge-1">
+          <div class="ep-float-badge-icon" style="background:rgba(16,185,129,0.12);color:var(--ep-success);"><i class="bi bi-trophy-fill"></i></div>
+          Rank #4 this week
+        </div>
+        <div class="ep-float-badge ep-float-badge-2">
+          <div class="ep-float-badge-icon" style="background:rgba(99,102,241,0.12);color:var(--ep-primary);"><i class="bi bi-robot"></i></div>
+          AI Doubt Solved!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STATS BAR ═══════════ -->
+<section class="ep-stats-bar">
+  <div class="ep-container">
+    <div class="ep-stats-grid">
+      <div>
+        <div class="ep-stat-number"><span data-counter="{{ stats.students }}">0</span>+</div>
+        <div class="ep-stat-label">Active Students</div>
+      </div>
+      <div>
+        <div class="ep-stat-number"><span data-counter="{{ stats.courses }}">0</span>+</div>
+        <div class="ep-stat-label">Premium Courses</div>
+      </div>
+      <div>
+        <div class="ep-stat-number"><span data-counter="{{ stats.teachers }}">0</span>+</div>
+        <div class="ep-stat-label">Expert Teachers</div>
+      </div>
+      <div>
+        <div class="ep-stat-number"><span data-counter="{{ stats.success_rate }}">0</span>%</div>
+        <div class="ep-stat-label">Success Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ABOUT / FEATURES ═══════════ -->
+<section class="ep-section">
+  <div class="ep-container">
+    <div class="ep-section-header ep-fade-in">
+      <div class="ep-eyebrow">Why EduPeak</div>
+      <h2 class="ep-section-title">Everything you need to <span class="ep-text-gradient">crack your exam</span></h2>
+      <p class="ep-section-subtitle">From live classes to AI-powered doubt solving — we've built the complete toolkit for serious students.</p>
+    </div>
+
+    <div class="ep-grid-4">
+      <div class="ep-feature-card ep-fade-in">
+        <div class="ep-feature-icon" style="background:rgba(99,102,241,0.1);color:var(--ep-primary);"><i class="bi bi-camera-video-fill"></i></div>
+        <div class="ep-feature-title">HD Video Lectures</div>
+        <div class="ep-feature-desc">Crystal clear lectures from India's top educators, available anytime, anywhere.</div>
+      </div>
+      <div class="ep-feature-card ep-fade-in ep-fade-in-delay-1">
+        <div class="ep-feature-icon" style="background:rgba(245,158,11,0.1);color:var(--ep-accent);"><i class="bi bi-robot"></i></div>
+        <div class="ep-feature-title">AI Doubt Solver</div>
+        <div class="ep-feature-desc">Stuck on a problem? Get instant, step-by-step answers from our AI tutor 24/7.</div>
+      </div>
+      <div class="ep-feature-card ep-fade-in ep-fade-in-delay-2">
+        <div class="ep-feature-icon" style="background:rgba(16,185,129,0.1);color:var(--ep-success);"><i class="bi bi-clipboard-check-fill"></i></div>
+        <div class="ep-feature-title">Smart Test Series</div>
+        <div class="ep-feature-desc">Practice with adaptive mock tests featuring detailed performance analytics.</div>
+      </div>
+      <div class="ep-feature-card ep-fade-in ep-fade-in-delay-3">
+        <div class="ep-feature-icon" style="background:rgba(239,68,68,0.1);color:var(--ep-danger);"><i class="bi bi-trophy-fill"></i></div>
+        <div class="ep-feature-title">Leaderboards & Badges</div>
+        <div class="ep-feature-desc">Stay motivated with gamified achievements and a live student leaderboard.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TEACHERS ═══════════ -->
+<section class="ep-section ep-section-alt">
+  <div class="ep-container">
+    <div class="ep-section-header ep-fade-in">
+      <div class="ep-eyebrow">Meet Your Mentors</div>
+      <h2 class="ep-section-title">Learn from <span class="ep-text-gradient">India's best</span> educators</h2>
+      <p class="ep-section-subtitle">Our teachers aren't just experts — they're passionate mentors dedicated to your success.</p>
+    </div>
+
+    <div class="ep-grid-4">
+      {% for teacher in teachers %}
+      <div class="ep-teacher-card ep-fade-in">
+        {% if teacher.photo %}
+          <img src="{{ teacher.photo.url }}" alt="{{ teacher.user.display_name }}" class="ep-teacher-photo" />
+        {% else %}
+          <div class="ep-teacher-photo ep-avatar-default" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">{{ teacher.user.display_name|first }}</div>
+        {% endif %}
+        <div class="ep-teacher-name">{{ teacher.user.display_name }}</div>
+        <div class="ep-teacher-designation">{{ teacher.designation|default:"Subject Expert" }}</div>
+        <div class="ep-teacher-stats">
+          <span><i class="bi bi-people-fill"></i> {{ teacher.total_students }}+</span>
+          <span><i class="bi bi-book-fill"></i> {{ teacher.courses.count }} courses</span>
+        </div>
+        <a href="/teachers/{{ teacher.pk }}/" class="ep-btn ep-btn-outline ep-btn-sm w-100">Explore Profile</a>
+      </div>
+      {% empty %}
+      <p class="text-muted">Teacher profiles coming soon.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ POPULAR COURSES ═══════════ -->
+<section class="ep-section">
+  <div class="ep-container">
+    <div class="ep-section-header ep-fade-in">
+      <div class="ep-eyebrow">Trending Now</div>
+      <h2 class="ep-section-title">Our most <span class="ep-text-gradient">popular courses</span></h2>
+      <p class="ep-section-subtitle">Hand-picked, high-impact courses loved by thousands of students.</p>
+    </div>
+
+    <div class="ep-grid-3">
+      {% for course in featured_courses %}
+      <div class="ep-course-card ep-fade-in">
+        <a href="/courses/{{ course.slug }}/" class="ep-course-thumb">
+          {% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" />{% endif %}
+          {% if course.is_free %}<span class="ep-course-badge ep-course-badge-free">Free</span>
+          {% elif course.discount_percentage > 0 %}<span class="ep-course-badge ep-course-badge-hot">{{ course.discount_percentage }}% Off</span>{% endif %}
+        </a>
+        <div class="ep-course-body">
+          <div class="ep-course-category">{{ course.category.name|default:"General" }}</div>
+          <a href="/courses/{{ course.slug }}/"><h3 class="ep-course-title">{{ course.title }}</h3></a>
+          <div class="ep-course-teacher">
+            <div class="ep-teacher-avatar-sm"></div>
+            {{ course.teacher.user.display_name }}
+          </div>
+          <div class="ep-course-meta">
+            <div class="ep-stars">
+              <i class="bi bi-star-fill"></i> {{ course.avg_rating }} <span class="count">({{ course.total_ratings }})</span>
+            </div>
+            <span class="small text-muted"><i class="bi bi-people"></i> {{ course.total_students }}</span>
+          </div>
+          <div class="ep-course-footer">
+            <div class="ep-price-group">
+              {% if course.is_free %}
+                <span class="ep-price-free">Free</span>
+              {% else %}
+                <span class="ep-price">₹{{ course.price }}</span>
+                {% if course.discount_percentage > 0 %}<span class="ep-price-original">₹{{ course.original_price }}</span>{% endif %}
+              {% endif %}
+            </div>
+            <a href="/courses/{{ course.slug }}/" class="ep-btn ep-btn-primary ep-btn-sm">View</a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted">Courses coming soon — check back shortly!</p>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/courses/" class="ep-btn ep-btn-outline ep-btn-lg">Browse All Courses <i class="bi bi-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TESTIMONIALS ═══════════ -->
+<section class="ep-section ep-section-alt">
+  <div class="ep-container">
+    <div class="ep-section-header ep-fade-in">
+      <div class="ep-eyebrow">Success Stories</div>
+      <h2 class="ep-section-title">What our <span class="ep-text-gradient">students say</span></h2>
+    </div>
+
+    <div class="ep-grid-3">
+      {% for t in testimonials %}
+      <div class="ep-testimonial-card ep-fade-in">
+        <div class="ep-testimonial-stars">
+          {% for i in "12345" %}<i class="bi {% if forloop.counter <= t.stars %}bi-star-fill{% else %}bi-star{% endif %}"></i>{% endfor %}
+        </div>
+        <p class="ep-testimonial-text">"{{ t.review|default:"This platform completely transformed how I prepare for exams. The AI doubt solver is a game changer!"|truncatewords:30 }}"</p>
+        <div class="ep-testimonial-author">
+          <div class="ep-testimonial-avatar">{{ t.student.display_name|first|upper }}</div>
+          <div>
+            <div class="ep-testimonial-name">{{ t.student.display_name }}</div>
+            <div class="ep-testimonial-course">{{ t.course.title }}</div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="ep-testimonial-card ep-fade-in">
+        <div class="ep-testimonial-stars">★★★★★</div>
+        <p class="ep-testimonial-text">"This platform completely transformed how I prepare for exams. The AI doubt solver is a game changer!"</p>
+        <div class="ep-testimonial-author">
+          <div class="ep-testimonial-avatar">P</div>
+          <div><div class="ep-testimonial-name">Priya Sharma</div><div class="ep-testimonial-course">JEE Main 2025</div></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="ep-cta">
+  <div class="ep-hero-blob ep-hero-blob-1"></div>
+  <div class="ep-container" style="position:relative;z-index:2;">
+    <h2 class="ep-cta-title">Ready to reach your peak?</h2>
+    <p class="ep-cta-subtitle">Join thousands of students already learning smarter with EduPeak.</p>
+    <a href="{% if user.is_authenticated %}/dashboard/{% else %}/auth/signup/{% endif %}" class="ep-btn ep-btn-accent ep-btn-lg">
+      Get Started for Free <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

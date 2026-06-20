@@ -1,0 +1,38 @@
+{% extends "partials/base.html" %}
+{% block title %}Our Teachers – EduPeak{% endblock %}
+{% block nav_teachers %}active{% endblock %}
+
+{% block content %}
+<div class="ep-page-header">
+  <div class="ep-container">
+    <div class="ep-breadcrumb"><a href="/">Home</a> <i class="bi bi-chevron-right"></i> <span>Teachers</span></div>
+    <h1 class="ep-page-title">Meet Our Expert Teachers</h1>
+  </div>
+</div>
+
+<div class="ep-container" style="padding-bottom:4rem;">
+  <div class="ep-grid-4">
+    {% for teacher in teachers %}
+    <div class="ep-teacher-card ep-fade-in">
+      {% if teacher.photo %}
+        <img src="{{ teacher.photo.url }}" alt="{{ teacher.user.display_name }}" class="ep-teacher-photo" />
+      {% else %}
+        <div class="ep-teacher-photo ep-avatar-default" style="display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1rem;">{{ teacher.user.display_name|first }}</div>
+      {% endif %}
+      <div class="ep-teacher-name">{{ teacher.user.display_name }}</div>
+      <div class="ep-teacher-designation">{{ teacher.designation|default:"Subject Expert" }}</div>
+      <div class="ep-teacher-stats">
+        <span><i class="bi bi-people-fill"></i> {{ teacher.total_students }}+</span>
+        <span><i class="bi bi-book-fill"></i> {{ teacher.courses.count }}</span>
+      </div>
+      <a href="/teachers/{{ teacher.pk }}/" class="ep-btn ep-btn-outline ep-btn-sm w-100">Explore Profile</a>
+    </div>
+    {% empty %}
+    <div class="ep-empty-state" style="grid-column:1/-1;">
+      <i class="bi bi-person-x ep-empty-icon"></i>
+      <h3>No teacher profiles yet</h3>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

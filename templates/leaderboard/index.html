@@ -1,0 +1,52 @@
+{% extends "partials/base.html" %}
+{% block title %}Leaderboard – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-dashboard">
+  {% include "partials/sidebar.html" with active="leaderboard" %}
+
+  <div class="ep-dashboard-content">
+    <div class="d-flex justify-content-between align-items-center mb-4" style="flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 class="ep-page-title">Leaderboard</h1>
+        <p class="text-muted mb-0">Top performers across all tests</p>
+      </div>
+      {% if user_rank %}
+      <div class="ep-badge-pill ep-badge-primary" style="font-size:0.9rem;padding:8px 16px;">Your Rank: #{{ user_rank }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ep-card">
+      <table class="ep-leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Student</th>
+            <th>Tests</th>
+            <th>Total Score</th>
+            <th>Avg %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr {% if row.student__id|stringformat:"s" == user.id|stringformat:"s" %}style="background:rgba(99,102,241,0.06);"{% endif %}>
+            <td>
+              {% if forloop.counter == 1 %}<span class="ep-rank-badge ep-rank-1">1</span>
+              {% elif forloop.counter == 2 %}<span class="ep-rank-badge ep-rank-2">2</span>
+              {% elif forloop.counter == 3 %}<span class="ep-rank-badge ep-rank-3">3</span>
+              {% else %}<span class="ep-rank-badge" style="background:var(--ep-bg-secondary);color:var(--ep-text-secondary);">{{ forloop.counter }}</span>{% endif %}
+            </td>
+            <td class="fw-bold">{{ row.student__full_name|default:row.student__username }}</td>
+            <td>{{ row.tests_count }}</td>
+            <td>{{ row.total_score|floatformat:1 }}</td>
+            <td>{{ row.avg_pct|floatformat:1 }}%</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted" style="padding:3rem;">No test attempts yet. Be the first to take a test!</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

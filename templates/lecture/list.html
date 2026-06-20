@@ -1,0 +1,42 @@
+{% extends "partials/base.html" %}
+{% block title %}{{ course.title }} – Lectures{% endblock %}
+
+{% block content %}
+<div class="ep-page-header">
+  <div class="ep-container">
+    <div class="ep-breadcrumb"><a href="/">Home</a> <i class="bi bi-chevron-right"></i> <a href="/courses/{{ course.slug }}/">{{ course.title }}</a> <i class="bi bi-chevron-right"></i> <span>Lectures</span></div>
+    <h1 class="ep-page-title">{{ course.title }}</h1>
+  </div>
+</div>
+
+<div class="ep-container" style="padding-bottom:4rem;">
+  {% for section in sections %}
+  <div class="ep-card mb-3">
+    <div class="ep-card-body">
+      <h3 class="fw-bold mb-3">{{ section.title }}</h3>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        {% for lecture in section.lectures.all %}
+        <a href="/lecture/{{ course.slug }}/{{ lecture.id }}/" class="d-flex align-items-center justify-content-between" style="padding:0.85rem 1rem;border-radius:10px;background:var(--ep-bg-secondary);text-decoration:none;color:var(--ep-text) !important;transition:all 0.2s;">
+          <span class="d-flex align-items-center gap-2">
+            {% if lecture.id in completed_ids %}
+              <i class="bi bi-check-circle-fill text-success"></i>
+            {% else %}
+              <i class="bi bi-{% if lecture.content_type == 'video' %}play-circle{% elif lecture.content_type == 'notes' %}file-text{% elif lecture.content_type == 'test' %}clipboard-check{% else %}pencil-square{% endif %} text-primary"></i>
+            {% endif %}
+            <span class="small fw-600">{{ lecture.title }}</span>
+          </span>
+          <span class="small text-muted">{{ lecture.duration_minutes }} min</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="ep-empty-state">
+    <i class="bi bi-collection-play ep-empty-icon"></i>
+    <h3>No lectures yet</h3>
+    <p>Content for this course will be added soon.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

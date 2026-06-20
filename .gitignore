@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# FIXED: Aage ka '/' hata diya, ab ye kisi bhi sub-folder ke media/staticfiles ko rok lega
+media/
+staticfiles/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Migrations (uncomment if you prefer to regenerate them per-environment)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Distribution
+build/
+dist/
+*.egg-info/

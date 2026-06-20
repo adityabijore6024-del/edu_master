@@ -1,0 +1,84 @@
+{% extends "partials/base.html" %}
+{% block title %}Support – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-page-header">
+  <div class="ep-container">
+    <h1 class="ep-page-title">We're Here to Help</h1>
+    <p class="text-muted mb-0">Reach out anytime — our team typically responds within 24 hours.</p>
+  </div>
+</div>
+
+<div class="ep-container" style="padding-bottom:4rem;">
+  <!-- Quick contact options -->
+  <div class="ep-grid-3 mb-5">
+    <a href="https://wa.me/91{{ whatsapp }}" target="_blank" class="ep-feature-card text-center" style="text-decoration:none;">
+      <div class="ep-feature-icon" style="background:rgba(37,211,102,0.1);color:#25d366;margin:0 auto 1rem;"><i class="bi bi-whatsapp"></i></div>
+      <div class="ep-feature-title">WhatsApp Support</div>
+      <div class="ep-feature-desc">+91 {{ whatsapp }}</div>
+    </a>
+    <a href="mailto:{{ support_email }}" class="ep-feature-card text-center" style="text-decoration:none;">
+      <div class="ep-feature-icon" style="background:rgba(99,102,241,0.1);color:var(--ep-primary);margin:0 auto 1rem;"><i class="bi bi-envelope-fill"></i></div>
+      <div class="ep-feature-title">Email Support</div>
+      <div class="ep-feature-desc">{{ support_email }}</div>
+    </a>
+    <div class="ep-feature-card text-center">
+      <div class="ep-feature-icon" style="background:rgba(245,158,11,0.1);color:var(--ep-accent);margin:0 auto 1rem;"><i class="bi bi-clock-fill"></i></div>
+      <div class="ep-feature-title">Response Time</div>
+      <div class="ep-feature-desc">Within 24 hours</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+    <!-- Ticket form -->
+    <div class="ep-card ep-card-body">
+      <h3 class="fw-bold mb-3"><i class="bi bi-ticket-detailed-fill text-primary me-2"></i>Raise a Support Ticket</h3>
+      <form method="post">
+        {% csrf_token %}
+        <div class="ep-form-group">
+          <label class="ep-label">Your Name</label>
+          {{ form.name }}
+        </div>
+        <div class="ep-form-group">
+          <label class="ep-label">Email Address</label>
+          {{ form.email }}
+        </div>
+        <div class="ep-form-group">
+          <label class="ep-label">Subject</label>
+          {{ form.subject }}
+        </div>
+        <div class="ep-form-group">
+          <label class="ep-label">Message</label>
+          {{ form.message }}
+        </div>
+        <button type="submit" class="ep-btn ep-btn-primary w-100">Submit Ticket <i class="bi bi-send"></i></button>
+      </form>
+    </div>
+
+    <!-- FAQ -->
+    <div>
+      <h3 class="fw-bold mb-3"><i class="bi bi-question-circle-fill text-primary me-2"></i>Frequently Asked Questions</h3>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        {% for faq in faqs %}
+        <details class="ep-card" style="padding:1rem 1.25rem;cursor:pointer;">
+          <summary style="font-weight:600;font-size:0.9rem;list-style:none;">{{ faq.q }}</summary>
+          <p class="small text-muted mt-2 mb-0">{{ faq.a }}</p>
+        </details>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ep-card input, .ep-card textarea {
+    width: 100%; padding: 0.7rem 1rem; background: var(--ep-surface);
+    border: 1.5px solid var(--ep-border); border-radius: var(--ep-radius);
+    font-size: 0.9rem; color: var(--ep-text); outline: none;
+  }
+  .ep-card input:focus, .ep-card textarea:focus { border-color: var(--ep-primary); box-shadow: var(--ep-shadow-glow); }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after { content: '+'; float: right; font-weight: 700; color: var(--ep-primary); }
+  details[open] summary::after { content: '−'; }
+</style>
+{% endblock %}

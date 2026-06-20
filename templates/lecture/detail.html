@@ -1,0 +1,65 @@
+{% extends "partials/base.html" %}
+{% block title %}{{ lecture.title }} – {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="ep-container" style="padding:2rem 0 4rem;">
+  <div class="ep-breadcrumb mb-3"><a href="/">Home</a> <i class="bi bi-chevron-right"></i> <a href="/lecture/{{ course.slug }}/">{{ course.title }}</a> <i class="bi bi-chevron-right"></i> <span>{{ lecture.title }}</span></div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:2rem;">
+    <div>
+      <!-- Video Player -->
+      <div class="ep-card mb-3" style="overflow:hidden;">
+        {% if lecture.content_type == 'video' and lecture.video_url %}
+          <div style="position:relative;padding-top:56.25%;background:#000;">
+            <iframe src="{{ lecture.video_url }}" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allowfullscreen></iframe>
+          </div>
+        {% else %}
+          <div style="padding:3rem;text-align:center;">
+            <i class="bi bi-file-earmark-richtext" style="font-size:3rem;color:var(--ep-primary);"></i>
+            <h3 class="mt-3">{{ lecture.title }}</h3>
+            {% if lecture.notes_file %}
+              <a href="{{ lecture.notes_file.url }}" class="ep-btn ep-btn-primary mt-3" download><i class="bi bi-download"></i> Download Notes</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <h2 class="fw-bold mb-3">{{ lecture.title }}</h2>
+
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2 mb-4" style="flex-wrap:wrap;">
+        <a href="#" class="ep-btn ep-btn-primary"><i class="bi bi-play-circle-fill"></i> Video</a>
+        {% if lecture.notes_file %}<a href="{{ lecture.notes_file.url }}" class="ep-btn ep-btn-ghost" download><i class="bi bi-file-text"></i> Notes</a>{% endif %}
+        <a href="#" class="ep-btn ep-btn-ghost"><i class="bi bi-pencil-square"></i> Assignment</a>
+        {% if related_tests %}
+        <a href="/tests/{{ related_tests.first.id }}/start/" class="ep-btn ep-btn-accent"><i class="bi bi-clipboard-check"></i> Take Test</a>
+        {% endif %}
+      </div>
+
+      <!-- Navigation -->
+      <div class="d-flex justify-content-between">
+        {% if prev_lecture %}
+        <a href="/lecture/{{ course.slug }}/{{ prev_lecture.id }}/" class="ep-btn ep-btn-ghost"><i class="bi bi-arrow-left"></i> Previous</a>
+        {% else %}<div></div>{% endif %}
+        {% if next_lecture %}
+        <a href="/lecture/{{ course.slug }}/{{ next_lecture.id }}/" class="ep-btn ep-btn-primary">Next <i class="bi bi-arrow-right"></i></a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="ep-card ep-card-body" style="height:fit-content;">
+      <h4 class="fw-bold mb-3">Course Content</h4>
+      {% for section in course.sections.all %}
+      <div class="small fw-bold text-muted mb-2 mt-3">{{ section.title }}</div>
+      {% for l in section.lectures.all %}
+      <a href="/lecture/{{ course.slug }}/{{ l.id }}/" class="d-flex align-items-center gap-2" style="padding:0.5rem 0.6rem;border-radius:8px;{% if l.id == lecture.id %}background:rgba(99,102,241,0.1);{% endif %}text-decoration:none;color:var(--ep-text) !important;">
+        <i class="bi bi-{% if l.content_type == 'video' %}play-circle{% else %}file-text{% endif %} {% if l.id == lecture.id %}text-primary{% else %}text-muted{% endif %}"></i>
+        <span class="small {% if l.id == lecture.id %}fw-bold{% endif %}">{{ l.title }}</span>
+      </a>
+      {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

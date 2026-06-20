@@ -1,0 +1,168 @@
+{% extends "partials/base.html" %}
+{% block title %}{{ test.title }} – Test in Progress{% endblock %}
+
+{% block content %}
+<div class="ep-container" style="padding:1.5rem 0;">
+  <div class="ep-test-layout">
+    <div class="ep-test-main">
+      <div class="ep-test-header">
+        <div>
+          <div class="fw-bold" style="font-size:1.1rem;">{{ test.title }}</div>
+          <div class="small" style="opacity:0.85;">{{ test.questions.count }} Questions · {{ test.total_marks }} Marks</div>
+        </div>
+        <div class="ep-timer" id="timerDisplay"><i class="bi bi-stopwatch"></i> <span id="timerText">--:--</span></div>
+      </div>
+
+      <form id="testForm">
+        {% for question in questions %}
+        <div class="ep-question-card" id="q-card-{{ forloop.counter }}" data-qid="{{ question.id }}">
+          <div class="ep-question-number">Question {{ forloop.counter }} of {{ questions.count }} · {{ question.marks }} marks · {{ question.get_question_type_display }}</div>
+          <div class="ep-question-text">{{ question.text|linebreaksbr }}</div>
+          {% if question.image %}<img src="{{ question.image.url }}" alt="" style="max-width:100%;border-radius:8px;margin-bottom:1rem;" />{% endif %}
+
+          {% if question.question_type == 'integer' %}
+            <input type="number" class="ep-input integer-answer" data-qid="{{ question.id }}" placeholder="Enter your numeric answer" style="max-width:300px;" />
+          {% else %}
+            {% for option in question.options.all %}
+            <label class="ep-option-label" data-qid="{{ question.id }}">
+              <input type="{% if question.question_type == 'multiple' %}checkbox{% else %}radio{% endif %}" name="q-{{ question.id }}" value="{{ option.label }}" class="option-input" />
+              <span class="ep-option-letter">{{ option.label }}</span>
+              <span>{{ option.text }}</span>
+            </label>
+            {% endfor %}
+          {% endif %}
+        </div>
+        {% endfor %}
+      </form>
+
+      <button id="submitBtn" class="ep-btn ep-btn-success ep-btn-lg w-100 mb-4"><i class="bi bi-check-circle-fill"></i> Submit Test</button>
+    </div>
+
+    <!-- Question Navigator -->
+    <div class="ep-test-sidebar">
+      <h4 class="fw-bold mb-3" style="font-size:0.9rem;">Question Navigator</h4>
+      <div class="ep-q-nav-grid">
+        {% for question in questions %}
+        <button type="button" class="ep-q-nav-btn" data-target="q-card-{{ forloop.counter }}" data-qid="{{ question.id }}">{{ forloop.counter }}</button>
+        {% endfor %}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.8rem;" class="text-muted">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--ep-success);border-radius:3px;"></span> Answered</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--ep-border);border-radius:3px;"></span> Not Visited</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let durationSeconds = {{ duration_seconds }};
+  const attemptId = "{{ attempt.id }}";
+  const startTime = Date.now();
+  const timerText = document.getElementById("timerText");
+  const timerDisplay = document.getElementById("timerDisplay");
+  const answers = {};
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  }
+
+  let timerInterval;
+  if (durationSeconds > 0) {
+    timerInterval = setInterval(() => {
+      durationSeconds--;
+      timerText.textContent = formatTime(durationSeconds);
+      if (durationSeconds <= 60) timerDisplay.classList.add("danger");
+      if (durationSeconds <= 0) {
+        clearInterval(timerInterval);
+        submitTest(true);
+      }
+    }, 1000);
+    timerText.textContent = formatTime(durationSeconds);
+  } else {
+    timerText.textContent = "∞";
+  }
+
+  // Track answers
+  document.querySelectorAll(".option-input").forEach((input) => {
+    input.addEventListener("change", function () {
+      const qid = this.name.replace("q-", "");
+      const isMultiple = this.type === "checkbox";
+      if (isMultiple) {
+        if (!answers[qid]) answers[qid] = [];
+        if (this.checked) {
+          if (!answers[qid].includes(this.value)) answers[qid].push(this.value);
+        } else {
+          answers[qid] = answers[qid].filter((v) => v !== this.value);
+        }
+      } else {
+        answers[qid] = this.value;
+      }
+      markAnswered(qid);
+      updateOptionStyles(qid);
+    });
+  });
+
+  document.querySelectorAll(".integer-answer").forEach((input) => {
+    input.addEventListener("input", function () {
+      const qid = this.dataset.qid;
+      answers[qid] = this.value;
+      if (this.value !== "") markAnswered(qid);
+    });
+  });
+
+  function markAnswered(qid) {
+    const navBtn = document.querySelector(`.ep-q-nav-btn[data-qid="${qid}"]`);
+    if (navBtn) navBtn.classList.add("answered");
+  }
+
+  function updateOptionStyles(qid) {
+    document.querySelectorAll(`.ep-option-label[data-qid="${qid}"]`).forEach((label) => {
+      const input = label.querySelector("input");
+      label.classList.toggle("selected", input.checked);
+    });
+  }
+
+  // Navigator scroll
+  document.querySelectorAll(".ep-q-nav-btn").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      document.getElementById(this.dataset.target).scrollIntoView({ behavior: "smooth", block: "center" });
+      document.querySelectorAll(".ep-q-nav-btn").forEach((b) => b.classList.remove("current"));
+      this.classList.add("current");
+    });
+  });
+
+  // Submit
+  document.getElementById("submitBtn").addEventListener("click", () => submitTest(false));
+
+  async function submitTest(autoSubmit) {
+    if (timerInterval) clearInterval(timerInterval);
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Submitting...';
+
+    try {
+      const res = await fetch(`/tests/submit/${attemptId}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ answers: answers, time_taken: timeTaken }),
+      });
+      const data = await res.json();
+      if (data.redirect) window.location.href = data.redirect;
+    } catch (err) {
+      showToast("Error submitting test. Please try again.", "error");
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Submit Test';
+    }
+  }
+
+  // Confirm before leaving
+  window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = "";
+  });
+</script>
+{% endblock %}

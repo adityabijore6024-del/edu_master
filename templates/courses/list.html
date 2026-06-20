@@ -1,0 +1,68 @@
+{% extends "partials/base.html" %}
+{% block title %}All Courses – EduPeak{% endblock %}
+{% block nav_courses %}active{% endblock %}
+
+{% block content %}
+<div class="ep-page-header">
+  <div class="ep-container">
+    <div class="ep-breadcrumb"><a href="/">Home</a> <i class="bi bi-chevron-right"></i> <span>Courses</span></div>
+    <h1 class="ep-page-title">Explore Our Courses</h1>
+  </div>
+</div>
+
+<div class="ep-container" style="padding-bottom:4rem;">
+  <!-- Filters -->
+  <form method="get" class="mb-4">
+    <div class="ep-search-wrap mb-3">
+      <i class="bi bi-search ep-search-icon"></i>
+      <input type="text" name="q" class="ep-search-input" placeholder="Search courses..." value="{{ query }}" />
+    </div>
+    <div class="d-flex gap-2" style="flex-wrap:wrap;">
+      <a href="/courses/" class="ep-category-chip {% if not selected_category %}active{% endif %}">All</a>
+      {% for cat in categories %}
+      <a href="/courses/?category={{ cat.slug }}" class="ep-category-chip {% if selected_category == cat.slug %}active{% endif %}"><i class="{{ cat.icon }}"></i> {{ cat.name }}</a>
+      {% endfor %}
+    </div>
+  </form>
+
+  <!-- Course Grid -->
+  <div class="ep-grid-3">
+    {% for course in courses %}
+    <div class="ep-course-card ep-fade-in">
+      <a href="/courses/{{ course.slug }}/" class="ep-course-thumb">
+        {% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" />{% endif %}
+        {% if course.is_free %}<span class="ep-course-badge ep-course-badge-free">Free</span>
+        {% elif course.discount_percentage > 0 %}<span class="ep-course-badge ep-course-badge-hot">{{ course.discount_percentage }}% Off</span>{% endif %}
+      </a>
+      <div class="ep-course-body">
+        <div class="ep-course-category">{{ course.category.name|default:"General" }}</div>
+        <a href="/courses/{{ course.slug }}/"><h3 class="ep-course-title">{{ course.title }}</h3></a>
+        <div class="ep-course-teacher">
+          <div class="ep-teacher-avatar-sm"></div>
+          {{ course.teacher.user.display_name }}
+        </div>
+        <div class="ep-course-meta">
+          <div class="ep-stars"><i class="bi bi-star-fill"></i> {{ course.avg_rating }} <span class="count">({{ course.total_ratings }})</span></div>
+          <span class="small text-muted"><i class="bi bi-people"></i> {{ course.total_students }}</span>
+        </div>
+        <div class="ep-course-footer">
+          <div class="ep-price-group">
+            {% if course.is_free %}<span class="ep-price-free">Free</span>
+            {% else %}<span class="ep-price">₹{{ course.price }}</span>
+              {% if course.discount_percentage > 0 %}<span class="ep-price-original">₹{{ course.original_price }}</span>{% endif %}
+            {% endif %}
+          </div>
+          <a href="/courses/{{ course.slug }}/" class="ep-btn ep-btn-primary ep-btn-sm">View</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="ep-empty-state" style="grid-column:1/-1;">
+      <i class="bi bi-journal-x ep-empty-icon"></i>
+      <h3>No courses found</h3>
+      <p>Try adjusting your search or filters.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

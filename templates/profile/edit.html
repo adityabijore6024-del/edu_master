@@ -1,0 +1,61 @@
+{% extends "partials/base.html" %}
+{% block title %}Edit Profile – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-dashboard">
+  {% include "partials/sidebar.html" with active="profile" %}
+
+  <div class="ep-dashboard-content">
+    <h1 class="ep-page-title mb-4">Edit Profile</h1>
+
+    <div class="ep-card ep-card-body" style="max-width:600px;">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="ep-form-group">
+          <label class="ep-label">Profile Photo</label>
+          {{ form.profile_photo }}
+        </div>
+
+        <div class="ep-form-group">
+          <label class="ep-label">Full Name</label>
+          {{ form.full_name }}
+        </div>
+
+        <div class="ep-form-group">
+          <label class="ep-label">Username</label>
+          {{ form.username }}
+        </div>
+
+        <div class="ep-form-group">
+          <label class="ep-label">Mobile Number</label>
+          {{ form.mobile }}
+        </div>
+
+        <div class="ep-form-group">
+          <label class="ep-label">Bio</label>
+          {{ form.bio }}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="ep-btn ep-btn-primary">Save Changes</button>
+          <a href="/profile/" class="ep-btn ep-btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ep-dashboard-content input[type="text"],
+  .ep-dashboard-content input[type="file"],
+  .ep-dashboard-content textarea {
+    width: 100%; padding: 0.7rem 1rem; background: var(--ep-surface);
+    border: 1.5px solid var(--ep-border); border-radius: var(--ep-radius);
+    font-size: 0.925rem; color: var(--ep-text); outline: none;
+  }
+  .ep-dashboard-content input:focus, .ep-dashboard-content textarea:focus {
+    border-color: var(--ep-primary); box-shadow: var(--ep-shadow-glow);
+  }
+</style>
+{% endblock %}

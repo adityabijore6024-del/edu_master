@@ -1,0 +1,147 @@
+{% extends "partials/base.html" %}
+{% block title %}AI Doubt Solver – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-container" style="padding:1.5rem 0;">
+  <div class="ep-chat-container">
+    <!-- Sidebar: session history -->
+    <div class="ep-chat-sidebar">
+      <a href="/ai-doubt/" class="ep-btn ep-btn-primary w-100 mb-3"><i class="bi bi-plus-lg"></i> New Chat</a>
+      <div class="ep-sidebar-label mb-2">Recent Sessions</div>
+      {% for s in sessions %}
+      <a href="/ai-doubt/session/{{ s.id }}/" class="ep-sidebar-link {% if session and session.id == s.id %}active{% endif %}" style="display:flex;">
+        <i class="bi bi-chat-left-text"></i>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.title|default:"New conversation" }}</span>
+      </a>
+      {% empty %}
+      <p class="small text-muted">No sessions yet. Ask your first question!</p>
+      {% endfor %}
+    </div>
+
+    <!-- Main Chat -->
+    <div class="ep-chat-main">
+      <div class="ep-chat-header">
+        <div class="ep-chat-avatar ai"><i class="bi bi-robot"></i></div>
+        <div>
+          <div class="fw-bold">EduPeak AI Tutor</div>
+          <div class="small text-muted">Powered by Claude · Always here to help</div>
+        </div>
+      </div>
+
+      <div class="ep-chat-messages" id="chatMessages">
+        {% if messages %}
+          {% for m in messages %}
+          <div class="ep-chat-bubble {% if m.role == 'user' %}user{% endif %}">
+            <div class="ep-chat-avatar {% if m.role == 'user' %}user-av{% else %}ai{% endif %}">
+              <i class="bi {% if m.role == 'user' %}bi-person-fill{% else %}bi-robot{% endif %}"></i>
+            </div>
+            <div class="ep-chat-content">{{ m.content|linebreaksbr }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="ep-chat-bubble">
+            <div class="ep-chat-avatar ai"><i class="bi bi-robot"></i></div>
+            <div class="ep-chat-content">
+              👋 Hi! I'm your AI tutor. Ask me anything — math problems, physics concepts, chemistry reactions, or any academic doubt. I'm here 24/7!
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ep-chat-footer">
+        <textarea id="doubtInput" class="ep-chat-textarea" placeholder="Type your question here... (e.g. Explain Newton's second law)" rows="1"></textarea>
+        <button id="sendBtn" class="ep-btn ep-btn-primary ep-btn-icon" style="width:50px;height:50px;border-radius:14px;">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const chatMessages = document.getElementById("chatMessages");
+  const doubtInput = document.getElementById("doubtInput");
+  const sendBtn = document.getElementById("sendBtn");
+  let currentSessionId = {% if session %}"{{ session.id }}"{% else %}null{% endif %};
+
+  function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+  scrollToBottom();
+
+  doubtInput.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 150) + "px";
+  });
+
+  doubtInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener("click", sendMessage);
+
+  function appendMessage(role, content) {
+    const bubble = document.createElement("div");
+    bubble.className = "ep-chat-bubble" + (role === "user" ? " user" : "");
+    bubble.innerHTML = `
+      <div class="ep-chat-avatar ${role === "user" ? "user-av" : "ai"}">
+        <i class="bi ${role === "user" ? "bi-person-fill" : "bi-robot"}"></i>
+      </div>
+      <div class="ep-chat-content">${content.replace(/\n/g, "<br>")}</div>
+    `;
+    chatMessages.appendChild(bubble);
+    scrollToBottom();
+  }
+
+  function appendTyping() {
+    const typing = document.createElement("div");
+    typing.className = "ep-chat-bubble";
+    typing.id = "typingIndicator";
+    typing.innerHTML = `
+      <div class="ep-chat-avatar ai"><i class="bi bi-robot"></i></div>
+      <div class="ep-typing-indicator">
+        <span class="ep-typing-dot"></span><span class="ep-typing-dot"></span><span class="ep-typing-dot"></span>
+      </div>
+    `;
+    chatMessages.appendChild(typing);
+    scrollToBottom();
+  }
+
+  async function sendMessage() {
+    const question = doubtInput.value.trim();
+    if (!question) return;
+
+    appendMessage("user", question);
+    doubtInput.value = "";
+    doubtInput.style.height = "auto";
+    sendBtn.disabled = true;
+    appendTyping();
+
+    try {
+      const res = await fetch("/ai-doubt/ask/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+        body: JSON.stringify({ question: question, session_id: currentSessionId }),
+      });
+      const data = await res.json();
+
+      document.getElementById("typingIndicator").remove();
+
+      if (data.answer) {
+        appendMessage("assistant", data.answer);
+        currentSessionId = data.session_id;
+        // Update URL without reload
+        window.history.replaceState({}, "", `/ai-doubt/session/${currentSessionId}/`);
+      } else {
+        appendMessage("assistant", "Sorry, something went wrong. Please try again.");
+      }
+    } catch (err) {
+      document.getElementById("typingIndicator")?.remove();
+      appendMessage("assistant", "Network error. Please check your connection and try again.");
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+</script>
+{% endblock %}

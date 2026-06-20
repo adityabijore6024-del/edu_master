@@ -1,0 +1,94 @@
+{% extends "partials/base.html" %}
+{% block title %}Dashboard – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-dashboard">
+  {% include "partials/sidebar.html" with active="dashboard" %}
+
+  <div class="ep-dashboard-content">
+    <!-- Welcome + Search -->
+    <div class="d-flex justify-content-between align-items-center mb-4" style="flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 class="ep-page-title">Welcome back, {{ user.display_name }} 👋</h1>
+        <p class="text-muted mb-0">Let's continue your learning journey today.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="/ai-doubt/" class="ep-btn ep-btn-primary"><i class="bi bi-robot"></i> Ask AI Doubt Solver</a>
+        <a href="/activity/" class="ep-btn ep-btn-ghost"><i class="bi bi-activity"></i> Activity</a>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <form method="get" class="mb-4">
+      <div class="ep-search-wrap">
+        <i class="bi bi-search ep-search-icon"></i>
+        <input type="text" name="q" class="ep-search-input" placeholder="Search for courses, topics, teachers..." value="{{ query }}" />
+      </div>
+    </form>
+
+    <!-- Image Slider / Banner -->
+    <div class="ep-card mb-4" style="background:var(--ep-grad-primary);border:none;overflow:hidden;position:relative;">
+      <div style="padding:2.5rem;color:white;position:relative;z-index:2;">
+        <span class="ep-badge-pill" style="background:rgba(255,255,255,0.2);color:white;margin-bottom:0.75rem;">🔥 Limited Time</span>
+        <h2 style="font-family:var(--ep-font-display);font-size:1.6rem;font-weight:800;margin-bottom:0.5rem;">Flat 40% Off on All Premium Courses</h2>
+        <p style="opacity:0.85;margin-bottom:1.25rem;max-width:480px;">Upgrade your prep with India's top-rated courses. Offer ends soon!</p>
+        <a href="/courses/" class="ep-btn ep-btn-accent">Browse Offers <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <h3 class="mb-3 fw-bold">Browse by Category</h3>
+    <div class="d-flex gap-2 mb-4" style="flex-wrap:wrap;">
+      {% for cat in categories %}
+      <a href="/courses/?category={{ cat.slug }}" class="ep-category-chip"><i class="{{ cat.icon }}"></i> {{ cat.name }}</a>
+      {% empty %}
+      <span class="text-muted small">Categories will appear here once added in the admin panel.</span>
+      {% endfor %}
+    </div>
+
+    <!-- My Courses -->
+    {% if enrollments %}
+    <h3 class="mb-3 fw-bold">Continue Learning</h3>
+    <div class="ep-grid-3 mb-4">
+      {% for e in enrollments %}
+      <div class="ep-course-card">
+        <a href="/lecture/{{ e.course.slug }}/" class="ep-course-thumb">
+          {% if e.course.thumbnail %}<img src="{{ e.course.thumbnail.url }}" alt="" />{% endif %}
+        </a>
+        <div class="ep-course-body">
+          <div class="ep-course-category">{{ e.course.category.name }}</div>
+          <h3 class="ep-course-title">{{ e.course.title }}</h3>
+          <a href="/lecture/{{ e.course.slug }}/" class="ep-btn ep-btn-primary ep-btn-sm w-100 mt-2">Resume Learning</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Featured Courses -->
+    <h3 class="mb-3 fw-bold">Recommended For You</h3>
+    <div class="ep-grid-3">
+      {% for course in featured_courses %}
+      <div class="ep-course-card">
+        <a href="/courses/{{ course.slug }}/" class="ep-course-thumb">
+          {% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" alt="" />{% endif %}
+          {% if course.is_free %}<span class="ep-course-badge ep-course-badge-free">Free</span>{% endif %}
+        </a>
+        <div class="ep-course-body">
+          <div class="ep-course-category">{{ course.category.name }}</div>
+          <a href="/courses/{{ course.slug }}/"><h3 class="ep-course-title">{{ course.title }}</h3></a>
+          <div class="ep-course-footer">
+            <div class="ep-price-group">
+              {% if course.is_free %}<span class="ep-price-free">Free</span>{% else %}<span class="ep-price">₹{{ course.price }}</span>{% endif %}
+            </div>
+            <a href="/courses/{{ course.slug }}/" class="ep-btn ep-btn-primary ep-btn-sm">View</a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted">No courses found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

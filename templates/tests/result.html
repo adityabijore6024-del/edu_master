@@ -1,0 +1,85 @@
+{% extends "partials/base.html" %}
+{% block title %}Result – {{ attempt.test.title }}{% endblock %}
+
+{% block content %}
+<div class="ep-container" style="padding:2.5rem 0 4rem;max-width:900px;">
+  <div class="ep-card ep-card-body text-center mb-4">
+    <h2 class="fw-bold mb-1">{{ attempt.test.title }}</h2>
+    <p class="text-muted mb-4">Test Result Summary</p>
+
+    <div class="ep-result-score-ring">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--ep-border)" stroke-width="10" />
+        <circle cx="60" cy="60" r="52" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+          stroke-dasharray="{{ attempt.percentage|floatformat:0 }} 100"
+          stroke-dashoffset="25" pathLength="100" stroke-linecap="round"
+          transform="rotate(-90 60 60)" />
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1" />
+            <stop offset="100%" stop-color="#8b5cf6" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="ep-result-score-text">
+        <div class="ep-result-pct">{{ attempt.percentage }}%</div>
+        <div class="small text-muted">Score</div>
+      </div>
+    </div>
+
+    <h3 class="fw-bold">{{ attempt.score }} / {{ attempt.total_marks }} marks</h3>
+    {% if attempt.percentage >= 60 %}
+      <span class="ep-badge-pill ep-badge-success mt-2">Great Job! 🎉</span>
+    {% else %}
+      <span class="ep-badge-pill ep-badge-warning mt-2">Keep Practicing 💪</span>
+    {% endif %}
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="ep-grid-4 mb-4">
+    <div class="ep-stat-card">
+      <div class="ep-stat-card-icon" style="background:rgba(16,185,129,0.1);color:var(--ep-success);"><i class="bi bi-check-circle-fill"></i></div>
+      <div><div class="ep-stat-card-value">{{ attempt.correct_count }}</div><div class="ep-stat-card-label">Correct</div></div>
+    </div>
+    <div class="ep-stat-card">
+      <div class="ep-stat-card-icon" style="background:rgba(239,68,68,0.1);color:var(--ep-danger);"><i class="bi bi-x-circle-fill"></i></div>
+      <div><div class="ep-stat-card-value">{{ attempt.wrong_count }}</div><div class="ep-stat-card-label">Wrong</div></div>
+    </div>
+    <div class="ep-stat-card">
+      <div class="ep-stat-card-icon" style="background:rgba(245,158,11,0.1);color:var(--ep-accent);"><i class="bi bi-dash-circle-fill"></i></div>
+      <div><div class="ep-stat-card-value">{{ attempt.skipped_count }}</div><div class="ep-stat-card-label">Skipped</div></div>
+    </div>
+    <div class="ep-stat-card">
+      <div class="ep-stat-card-icon" style="background:rgba(99,102,241,0.1);color:var(--ep-primary);"><i class="bi bi-clock-fill"></i></div>
+      <div><div class="ep-stat-card-value">{{ attempt.time_taken_seconds|floatformat:0 }}s</div><div class="ep-stat-card-label">Time Taken</div></div>
+    </div>
+  </div>
+
+  <!-- Answer Review -->
+  <div class="ep-card ep-card-body">
+    <h3 class="fw-bold mb-3">Answer Review</h3>
+    {% for response in responses %}
+    <div class="mb-3 pb-3" style="border-bottom:1px solid var(--ep-border-light);">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <span class="small fw-bold">Q{{ forloop.counter }}. {{ response.question.text|truncatewords:25 }}</span>
+        {% if response.is_skipped %}
+          <span class="ep-badge-pill ep-badge-warning">Skipped</span>
+        {% elif response.is_correct %}
+          <span class="ep-badge-pill ep-badge-success">+{{ response.marks_awarded }}</span>
+        {% else %}
+          <span class="ep-badge-pill ep-badge-danger">{{ response.marks_awarded }}</span>
+        {% endif %}
+      </div>
+      {% if response.question.explanation %}
+        <p class="small text-muted mb-0"><i class="bi bi-lightbulb"></i> {{ response.question.explanation }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/tests/" class="ep-btn ep-btn-outline">Back to Tests</a>
+    <a href="/tests/{{ attempt.test.id }}/start/" class="ep-btn ep-btn-primary">Retake Test</a>
+  </div>
+</div>
+{% endblock %}

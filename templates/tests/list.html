@@ -1,0 +1,34 @@
+{% extends "partials/base.html" %}
+{% block title %}Tests – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-page-header">
+  <div class="ep-container">
+    <h1 class="ep-page-title">Practice Tests</h1>
+    <p class="text-muted mb-0">Sharpen your skills with our curated test series.</p>
+  </div>
+</div>
+
+<div class="ep-container" style="padding-bottom:4rem;">
+  <div class="ep-grid-3">
+    {% for test in tests %}
+    <div class="ep-card ep-card-body">
+      <span class="ep-badge-pill ep-badge-primary mb-2">{{ test.questions.count }} Questions</span>
+      <h3 class="fw-bold mb-2">{{ test.title }}</h3>
+      <p class="small text-muted mb-3">{{ test.description|truncatewords:18 }}</p>
+      <div class="d-flex justify-content-between small text-muted mb-3">
+        <span><i class="bi bi-clock"></i> {{ test.duration_minutes }} min</span>
+        <span><i class="bi bi-award"></i> {{ test.total_marks }} marks</span>
+        <span><i class="bi bi-arrow-repeat"></i> {% if test.unlimited_attempts %}Unlimited{% else %}{{ test.max_attempts }} attempts{% endif %}</span>
+      </div>
+      <a href="/tests/{{ test.id }}/start/" class="ep-btn ep-btn-primary w-100">Start Test <i class="bi bi-arrow-right"></i></a>
+    </div>
+    {% empty %}
+    <div class="ep-empty-state" style="grid-column:1/-1;">
+      <i class="bi bi-clipboard-x ep-empty-icon"></i>
+      <h3>No tests available yet</h3>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

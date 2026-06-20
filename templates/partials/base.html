@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EduPeak – India's premium EdTech platform for competitive exam preparation." />
+  <title>{% block title %}EduPeak – Learn Without Limits{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="/static/css/main.css" />
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════════ -->
+<nav class="ep-navbar" id="mainNav">
+  <div class="ep-nav-inner">
+    <!-- Logo -->
+    <a href="/" class="ep-logo">
+      <span class="ep-logo-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+      <span class="ep-logo-text">Edu<span class="ep-logo-accent">Peak</span></span>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <ul class="ep-nav-links" id="navLinks">
+      <li><a href="/" class="ep-nav-link {% block nav_home %}{% endblock %}">Home</a></li>
+      <li><a href="/courses/" class="ep-nav-link {% block nav_courses %}{% endblock %}">Courses</a></li>
+      <li><a href="/teachers/" class="ep-nav-link {% block nav_teachers %}{% endblock %}">Teachers</a></li>
+      <li class="ep-dropdown">
+        <a href="#" class="ep-nav-link ep-dropdown-toggle">
+          More <i class="bi bi-chevron-down ep-chevron"></i>
+        </a>
+        <div class="ep-dropdown-menu">
+          {% for cat in nav_categories %}
+          <a href="/courses/?category={{ cat.slug }}" class="ep-dropdown-item">
+            <i class="{{ cat.icon }} me-2"></i>{{ cat.name }}
+          </a>
+          {% endfor %}
+        </div>
+      </li>
+    </ul>
+
+    <!-- Right Actions -->
+    <div class="ep-nav-actions">
+      {% if user.is_authenticated %}
+        <a href="/ai-doubt/" class="ep-btn ep-btn-ghost ep-btn-sm" title="AI Doubt Solver">
+          <i class="bi bi-robot"></i>
+        </a>
+        <a href="/activity/" class="ep-btn ep-btn-ghost ep-btn-sm" title="My Activity">
+          <i class="bi bi-activity"></i>
+        </a>
+        <!-- Profile dropdown -->
+        <div class="ep-user-menu">
+          <button class="ep-user-btn" id="userMenuBtn">
+            {% if user.profile_photo %}
+              <img src="{{ user.profile_photo.url }}" alt="{{ user.display_name }}" class="ep-avatar" />
+            {% else %}
+              <div class="ep-avatar ep-avatar-default">{{ user.display_name|first|upper }}</div>
+            {% endif %}
+            <i class="bi bi-chevron-down ep-chevron ep-chevron-sm"></i>
+          </button>
+          <div class="ep-user-dropdown" id="userDropdown">
+            <div class="ep-user-info">
+              <strong>{{ user.display_name }}</strong>
+              <span>{{ user.email }}</span>
+            </div>
+            <hr class="ep-divider" />
+            <a href="/dashboard/" class="ep-user-item"><i class="bi bi-grid-fill"></i> Dashboard</a>
+            <a href="/profile/" class="ep-user-item"><i class="bi bi-person-fill"></i> Profile</a>
+            <a href="/analytics/" class="ep-user-item"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
+            <a href="/achievements/" class="ep-user-item"><i class="bi bi-trophy-fill"></i> Achievements</a>
+            <hr class="ep-divider" />
+            <a href="/auth/logout/" class="ep-user-item ep-user-item-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
+          </div>
+        </div>
+      {% else %}
+        <a href="/auth/login/" class="ep-btn ep-btn-ghost ep-btn-sm">Log In</a>
+        <a href="/auth/signup/" class="ep-btn ep-btn-primary ep-btn-sm">Get Started Free</a>
+      {% endif %}
+
+      <!-- Dark Mode Toggle -->
+      <button class="ep-btn ep-btn-ghost ep-btn-icon" id="themeToggle" title="Toggle dark mode">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+      </button>
+
+      <!-- Hamburger -->
+      <button class="ep-hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="ep-mobile-menu" id="mobileMenu">
+    <a href="/" class="ep-mobile-link">Home</a>
+    <a href="/courses/" class="ep-mobile-link">Courses</a>
+    <a href="/teachers/" class="ep-mobile-link">Teachers</a>
+    {% if user.is_authenticated %}
+      <a href="/dashboard/" class="ep-mobile-link">Dashboard</a>
+      <a href="/ai-doubt/" class="ep-mobile-link">AI Doubt Solver</a>
+      <a href="/activity/" class="ep-mobile-link">Activity</a>
+      <a href="/profile/" class="ep-mobile-link">Profile</a>
+      <a href="/auth/logout/" class="ep-mobile-link ep-mobile-link-danger">Logout</a>
+    {% else %}
+      <a href="/auth/login/" class="ep-mobile-link">Log In</a>
+      <a href="/auth/signup/" class="ep-mobile-link ep-mobile-cta">Get Started Free</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- Toast Notifications -->
+{% if messages %}
+<div class="ep-toast-container">
+  {% for message in messages %}
+  <div class="ep-toast ep-toast-{{ message.tags }}" role="alert">
+    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-x-circle-fill{% else %}bi-info-circle-fill{% endif %}"></i>
+    <span>{{ message }}</span>
+    <button class="ep-toast-close"><i class="bi bi-x"></i></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Main Content -->
+<main class="ep-main">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════ -->
+<footer class="ep-footer">
+  <div class="ep-container">
+    <div class="ep-footer-grid">
+      <div class="ep-footer-brand">
+        <a href="/" class="ep-logo ep-logo-footer">
+          <span class="ep-logo-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+          <span class="ep-logo-text">Edu<span class="ep-logo-accent">Peak</span></span>
+        </a>
+        <p>India's most loved platform for competitive exam prep. Learn from the best, achieve the best.</p>
+        <div class="ep-social-links">
+          <a href="#" class="ep-social-btn"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="ep-social-btn"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="ep-social-btn"><i class="bi bi-twitter-x"></i></a>
+          <a href="https://wa.me/919584889727" class="ep-social-btn ep-social-wa" target="_blank"><i class="bi bi-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="ep-footer-col">
+        <h4>Platform</h4>
+        <a href="/courses/">All Courses</a>
+        <a href="/teachers/">Our Teachers</a>
+        <a href="/leaderboard/">Leaderboard</a>
+        <a href="/achievements/">Achievements</a>
+      </div>
+      <div class="ep-footer-col">
+        <h4>My Learning</h4>
+        <a href="/dashboard/">Dashboard</a>
+        <a href="/activity/">Activity</a>
+        <a href="/ai-doubt/">AI Doubt Solver</a>
+        <a href="/tests/">Tests</a>
+      </div>
+      <div class="ep-footer-col">
+        <h4>Support</h4>
+        <a href="/support/">Help Center</a>
+        <a href="mailto:adityabijore6024@gmail.com">adityabijore6024@gmail.com</a>
+        <a href="https://wa.me/919584889727" target="_blank">WhatsApp: 9584889727</a>
+      </div>
+    </div>
+    <div class="ep-footer-bottom">
+      <p>&copy; 2025 EduPeak. All rights reserved.</p>
+      <div>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Refund Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Core JS -->
+<script src="/static/js/main.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

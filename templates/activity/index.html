@@ -1,0 +1,48 @@
+{% extends "partials/base.html" %}
+{% block title %}My Activity – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-dashboard">
+  {% include "partials/sidebar.html" with active="activity" %}
+
+  <div class="ep-dashboard-content">
+    <h1 class="ep-page-title mb-4">My Activity</h1>
+
+    <!-- Purchased Courses -->
+    <h3 class="fw-bold mb-3">Purchased Courses</h3>
+    <div class="ep-grid-3 mb-4">
+      {% for e in enrollments %}
+      <div class="ep-card ep-card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h4 class="fw-bold" style="font-size:0.95rem;">{{ e.course.title }}</h4>
+        </div>
+        <p class="small text-muted mb-2"><i class="bi bi-calendar3"></i> Purchased on {{ e.enrolled_at|date:"M d, Y" }}</p>
+        <p class="small text-muted mb-3"><i class="bi bi-cash"></i> ₹{{ e.amount_paid }}</p>
+        <a href="/lecture/{{ e.course.slug }}/" class="ep-btn ep-btn-primary ep-btn-sm w-100">Continue Learning</a>
+      </div>
+      {% empty %}
+      <div class="ep-empty-state" style="grid-column:1/-1;">
+        <i class="bi bi-bag-x ep-empty-icon"></i>
+        <h3>No purchases yet</h3>
+        <p>Explore our courses to get started.</p>
+        <a href="/courses/" class="ep-btn ep-btn-primary mt-2">Browse Courses</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Recently Viewed -->
+    <h3 class="fw-bold mb-3">Recently Viewed</h3>
+    <div class="ep-grid-3">
+      {% for rv in recently_viewed %}
+      <div class="ep-card ep-card-body">
+        <h4 class="fw-bold" style="font-size:0.95rem;">{{ rv.course.title }}</h4>
+        <p class="small text-muted mb-3"><i class="bi bi-eye"></i> Viewed {{ rv.viewed_at|timesince }} ago</p>
+        <a href="/courses/{{ rv.course.slug }}/" class="ep-btn ep-btn-outline ep-btn-sm w-100">View Course</a>
+      </div>
+      {% empty %}
+      <p class="text-muted">No recently viewed courses.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

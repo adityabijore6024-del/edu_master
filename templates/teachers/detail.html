@@ -1,0 +1,41 @@
+{% extends "partials/base.html" %}
+{% block title %}{{ teacher.user.display_name }} – EduPeak{% endblock %}
+
+{% block content %}
+<section style="background:var(--ep-grad-hero);padding:4rem 0;color:white;text-align:center;">
+  <div class="ep-container">
+    {% if teacher.photo %}
+      <img src="{{ teacher.photo.url }}" alt="" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.2);margin:0 auto 1.25rem;" />
+    {% else %}
+      <div style="width:120px;height:120px;border-radius:50%;background:var(--ep-grad-primary);display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;margin:0 auto 1.25rem;border:4px solid rgba(255,255,255,0.2);">{{ teacher.user.display_name|first }}</div>
+    {% endif %}
+    <h1 style="font-family:var(--ep-font-display);font-size:2rem;font-weight:800;">{{ teacher.user.display_name }}</h1>
+    <p style="opacity:0.75;">{{ teacher.designation }}</p>
+    <div class="d-flex justify-content-center gap-4 mt-3" style="opacity:0.85;">
+      <span><i class="bi bi-people-fill"></i> {{ teacher.total_students }}+ Students</span>
+      <span><i class="bi bi-book-fill"></i> {{ courses.count }} Courses</span>
+    </div>
+  </div>
+</section>
+
+<div class="ep-container" style="padding:3rem 0;">
+  {% if teacher.subjects %}<p class="text-muted mb-4">Subjects: {{ teacher.subjects }}</p>{% endif %}
+  <h3 class="fw-bold mb-3">Courses by {{ teacher.user.display_name }}</h3>
+  <div class="ep-grid-3">
+    {% for course in courses %}
+    <div class="ep-course-card">
+      <a href="/courses/{{ course.slug }}/" class="ep-course-thumb">{% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" alt="" />{% endif %}</a>
+      <div class="ep-course-body">
+        <a href="/courses/{{ course.slug }}/"><h3 class="ep-course-title">{{ course.title }}</h3></a>
+        <div class="ep-course-footer">
+          <span class="ep-price">{% if course.is_free %}Free{% else %}₹{{ course.price }}{% endif %}</span>
+          <a href="/courses/{{ course.slug }}/" class="ep-btn ep-btn-primary ep-btn-sm">View</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No courses published yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

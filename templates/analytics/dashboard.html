@@ -1,0 +1,78 @@
+{% extends "partials/base.html" %}
+{% block title %}Analytics – EduPeak{% endblock %}
+
+{% block content %}
+<div class="ep-dashboard">
+  {% include "partials/sidebar.html" with active="analytics" %}
+
+  <div class="ep-dashboard-content">
+    <h1 class="ep-page-title mb-4">My Analytics</h1>
+
+    <div class="ep-grid-4 mb-4">
+      <div class="ep-stat-card">
+        <div class="ep-stat-card-icon" style="background:rgba(99,102,241,0.1);color:var(--ep-primary);"><i class="bi bi-book-fill"></i></div>
+        <div><div class="ep-stat-card-value">{{ enrollments_count }}</div><div class="ep-stat-card-label">Courses Purchased</div></div>
+      </div>
+      <div class="ep-stat-card">
+        <div class="ep-stat-card-icon" style="background:rgba(16,185,129,0.1);color:var(--ep-success);"><i class="bi bi-clipboard-check-fill"></i></div>
+        <div><div class="ep-stat-card-value">{{ tests_count }}</div><div class="ep-stat-card-label">Tests Given</div></div>
+      </div>
+      <div class="ep-stat-card">
+        <div class="ep-stat-card-icon" style="background:rgba(245,158,11,0.1);color:var(--ep-accent);"><i class="bi bi-star-fill"></i></div>
+        <div><div class="ep-stat-card-value">{{ best_score }}</div><div class="ep-stat-card-label">Best Score</div></div>
+      </div>
+      <div class="ep-stat-card">
+        <div class="ep-stat-card-icon" style="background:rgba(239,68,68,0.1);color:var(--ep-danger);"><i class="bi bi-graph-up"></i></div>
+        <div><div class="ep-stat-card-value">{{ avg_pct }}</div><div class="ep-stat-card-label">Average Score</div></div>
+      </div>
+    </div>
+
+    <div class="ep-card ep-card-body mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="ep-stat-card-icon" style="background:rgba(99,102,241,0.1);color:var(--ep-primary);"><i class="bi bi-hourglass-split"></i></div>
+        <div>
+          <div class="fw-bold" style="font-size:1.5rem;">{{ total_study_hours }} hrs</div>
+          <div class="small text-muted">Total Study Time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Chart -->
+    <div class="ep-card ep-card-body">
+      <h3 class="fw-bold mb-3">Test Performance Over Time</h3>
+      <canvas id="perfChart" height="100"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const chartData = JSON.parse('{{ chart_data|escapejs }}' || '[]');
+  const labels = chartData.map((d, i) => d.test__title || `Test ${i + 1}`);
+  const scores = chartData.map((d) => d.score);
+
+  const ctx = document.getElementById("perfChart");
+  if (ctx && chartData.length) {
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Score",
+          data: scores,
+          borderColor: "#6366f1",
+          backgroundColor: "rgba(99,102,241,0.1)",
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: "#6366f1",
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } },
+      },
+    });
+  }
+</script>
+{% endblock %}
