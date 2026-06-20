@@ -1,1 +1,1 @@
-web: gunicorn edtech_project.wsgi:application
+web: gunicorn edtech_project.wsgi:application --bind 0.0.0.0:$PORT
